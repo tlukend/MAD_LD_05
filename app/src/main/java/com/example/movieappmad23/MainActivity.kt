@@ -7,6 +7,8 @@ import androidx.activity.compose.setContent
 import com.example.movieappmad23.navigation.Navigation
 import com.example.movieappmad23.ui.theme.MovieAppMAD23Theme
 
+
+//TODO: change movieViewModel
 class MainActivity : ComponentActivity() {
     // variable instantiations should go into onCreate
     override fun onCreate(savedInstanceState: Bundle?) {

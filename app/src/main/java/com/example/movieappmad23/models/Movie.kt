@@ -3,17 +3,21 @@ package com.example.movieappmad23.models
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.util.*
 
+@Entity
 class Movie(
+    @PrimaryKey(autoGenerate = true)
     val id: String = UUID.randomUUID().toString(),
     val title: String = "",
     val year: String = "",
-    val genre: List<Genre> = listOf(),
+    val genre: List<Genre> = listOf(),  //TODO: typeconvert this one
     val director: String = "",
     val actors: String = "",
     val plot: String = "No plot available",
-    val images: List<String> = listOf(),
+    val images: List<String> = listOf(),    //TODO: typeconvert this one too
     val rating: Double = 0.0,
     initialIsFavorite: Boolean = false
 ) {
