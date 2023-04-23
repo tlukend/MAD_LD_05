@@ -4,20 +4,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.movieappmad23.common.Validator
 import com.example.movieappmad23.models.Movie
 import com.example.movieappmad23.models.getMovies
+import com.example.movieappmad23.repositories.MovieRepository
 import com.example.movieappmad23.screens.AddMovieUIEvent
 import com.example.movieappmad23.screens.AddMovieUiState
 import com.example.movieappmad23.screens.hasError
 import com.example.movieappmad23.screens.toMovie
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
 // inherit from ViewModel class
-class MoviesViewModel: ViewModel() {
+class MoviesViewModel(private val repository: MovieRepository): ViewModel() {
     private val _movieListState = MutableStateFlow(listOf<Movie>())
     val movieListState: StateFlow<List<Movie>> = _movieListState.asStateFlow()
 
@@ -28,7 +28,13 @@ class MoviesViewModel: ViewModel() {
         get() = _movieListState.value.filter { it.isFavorite }
 
     init {
-        _movieListState.value = getMovies()
+        viewModelScope.launch {
+            repository.getAllMovies().collect { movieList ->
+                if (!movieList.isNullOrEmpty()) {
+                    _movieListState.value = movieList
+                }
+            }
+        }
     }
 
     fun updateUIState(newMovieUiState: AddMovieUiState, event: AddMovieUIEvent){
@@ -69,7 +75,7 @@ class MoviesViewModel: ViewModel() {
         movieUiState = state.copy(actionEnabled = !newMovieUiState.hasError())
     }
 
-    fun updateFavoriteMovies(movie: Movie) = _movieListState.value.find { it.id == movie.id }?.let { movie ->
+    fun updateFavoriteMovies(movie: Movie){
         movie.isFavorite = !movie.isFavorite
     }
 

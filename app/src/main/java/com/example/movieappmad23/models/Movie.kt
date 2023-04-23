@@ -9,19 +9,19 @@ import java.util.*
 
 @Entity
 class Movie(
-    @PrimaryKey(autoGenerate = true)
-    val id: String = UUID.randomUUID().toString(),
+    @PrimaryKey(autoGenerate = false)
+    val id: String = "",
     val title: String = "",
     val year: String = "",
-    val genre: List<Genre> = listOf(),  //TODO: typeconvert this one
+    val genre: List<Genre> = listOf(),
     val director: String = "",
     val actors: String = "",
     val plot: String = "No plot available",
-    val images: List<String> = listOf(),    //TODO: typeconvert this one too
+    val images: List<String> = listOf(),
     val rating: Double = 0.0,
-    initialIsFavorite: Boolean = false
+    var isFavorite: Boolean = false
 ) {
-    var isFavorite by mutableStateOf(initialIsFavorite)
+    //var isFavorite by mutableStateOf(initialIsFavorite)
 }
 
 fun getMovies(): List<Movie> {

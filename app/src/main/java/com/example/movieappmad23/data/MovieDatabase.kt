@@ -3,7 +3,8 @@ package com.example.movieappmad23.data
 import android.content.Context
 import androidx.room.*
 import com.example.movieappmad23.models.Movie
-import com.example.movieappmad23.utils.CustomConverters
+import com.example.movieappmad23.utils.CustomConverter
+
 
 @Database(
     entities = [Movie::class],
@@ -11,7 +12,7 @@ import com.example.movieappmad23.utils.CustomConverters
     exportSchema = false
 )
 
-@TypeConverters(CustomConverters::class)
+@TypeConverters(CustomConverter::class)
 abstract class MovieDatabase : RoomDatabase() {
 
     abstract fun movieDao(): MovieDao //if i had more daos, i would need to write them here
