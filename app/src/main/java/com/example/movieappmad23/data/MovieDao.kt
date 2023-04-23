@@ -26,6 +26,6 @@ interface MovieDao {
 
     //getMovieByID
     @Query("SELECT * from movie where id =:movieId")
-    fun getAllMovieById(movieId: Int): Flow<List<Movie>>
+    fun getAllMovieById(movieId: String): Flow<List<Movie>>
 
 }

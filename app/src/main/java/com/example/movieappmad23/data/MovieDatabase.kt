@@ -14,7 +14,7 @@ import com.example.movieappmad23.utils.CustomConverters
 @TypeConverters(CustomConverters::class)
 abstract class MovieDatabase : RoomDatabase() {
 
-    abstract fun movieDao(): MovieDao
+    abstract fun movieDao(): MovieDao //if i had more daos, i would need to write them here
 
     companion object{
         @Volatile
