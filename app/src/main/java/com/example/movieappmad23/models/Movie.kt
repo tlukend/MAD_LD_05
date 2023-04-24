@@ -10,7 +10,7 @@ import java.util.*
 @Entity
 class Movie(
     @PrimaryKey(autoGenerate = false)
-    val id: String = "",
+    val id: String = "",    //TODO: maybe id must be int??
     val title: String = "",
     val year: String = "",
     val genre: List<Genre> = listOf(),

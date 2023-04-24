@@ -13,10 +13,20 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.movieappmad23.data.MovieDatabase
+import com.example.movieappmad23.models.Movie
+import com.example.movieappmad23.repositories.MovieRepository
+import com.example.movieappmad23.utils.InjectorUtils
+import com.example.movieappmad23.viewmodels.DetailViewModel
+import com.example.movieappmad23.viewmodels.HomeViewModel
+import com.example.movieappmad23.viewmodels.MovieViewModelFactory
 import com.example.movieappmad23.viewmodels.MoviesViewModel
 import com.example.movieappmad23.widgets.HomeTopAppBar
 import com.example.movieappmad23.widgets.MovieRow
@@ -26,6 +36,15 @@ fun HomeScreen(
     navController: NavController = rememberNavController(),
     moviesViewModel: MoviesViewModel
 ){
+    val db = MovieDatabase.getDatabase(LocalContext.current)
+    val repository = MovieRepository(movieDao = db.movieDao())
+    val factory = MovieViewModelFactory(repository)
+    val viewModel: MoviesViewModel = viewModel(factory = factory)
+
+   /* val coroutineScope = rememberCoroutineScope()
+    val homeViewModel: HomeViewModel = viewModel(factory = InjectorUtils.provideMovieViewModelFactory(LocalContext.current))
+    val movieList by homeViewModel.movie.collectAsState()
+*/
     Scaffold(topBar = {
         HomeTopAppBar(
             title = "Home",
@@ -52,7 +71,7 @@ fun HomeScreen(
         MainContent(
             modifier = Modifier.padding(padding),
             navController = navController,
-            viewModel = moviesViewModel
+            viewModel = viewModel()
         )
     }
 }

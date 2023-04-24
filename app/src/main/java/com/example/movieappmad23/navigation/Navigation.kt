@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.movieappmad23.screens.*
+import com.example.movieappmad23.viewmodels.HomeViewModel
 import com.example.movieappmad23.viewmodels.MoviesViewModel
 
 @Composable

@@ -4,9 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.movieappmad23.repositories.MovieRepository
 
+
+//we have to give parameters we want to give viewmodel to the factory
 class MovieViewModelFactory(private val repository: MovieRepository): ViewModelProvider.Factory {
 
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T { //how the vm is instanced
 
         if(modelClass.isAssignableFrom(HomeViewModel::class.java)){
             return HomeViewModel(repository) as T

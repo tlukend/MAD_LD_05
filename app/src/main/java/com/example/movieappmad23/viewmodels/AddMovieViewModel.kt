@@ -9,23 +9,19 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class AddMovieViewModel(private val repository: MovieRepository): ViewModel() {
-    private val _movies = MutableStateFlow(listOf<Movie>())
-
-    init {
-        viewModelScope.launch {
-            repository.getAllMovies().collect{movieList ->
-                if (!movieList.isNullOrEmpty()) {
-                    _movies.value = movieList
-                }
-            }
-        }
-    }
 
     suspend fun addMovie(movie: Movie){
         repository.add(movie)
     }
 
-    //TODO: delete movie?
+    //TODO: probably not gonna need this
+    suspend fun deleteMovie(movie: Movie){
+        repository.delete(movie)
+    }
+
+    suspend fun validateUserInput(input: String): Boolean{
+        return input.isEmpty() //isEmpty returns true or false
+    }
 
 
 }

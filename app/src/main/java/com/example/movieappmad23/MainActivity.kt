@@ -17,6 +17,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MovieAppMAD23Theme {
                 Navigation()
+
             }
         }
     }
