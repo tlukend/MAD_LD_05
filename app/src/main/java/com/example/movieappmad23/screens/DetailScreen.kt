@@ -26,7 +26,8 @@ fun DetailScreen(
     movieId:String){
 
     //TODO: why can i not add my provideDetailFactory??
-    val viewModel : DetailViewModel = viewModel(factory = InjectorUtils.pro)
+    val viewModel : DetailViewModel = viewModel(factory = InjectorUtils.provideDetailViewModelFactory(
+        LocalContext.current, movieId))
     val coroutineScope = rememberCoroutineScope()
 
     val movie = viewModel.movieState.collectAsState()

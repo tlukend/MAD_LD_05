@@ -14,7 +14,7 @@ object InjectorUtils {
     private fun getMovieRepository(context: Context): MovieRepository{ //still need context as param.
         return MovieRepository(MovieDatabase.getDatabase(context).movieDao()) //takes the dao from above declared db
     }
-    private fun provideDetailViewModelFactory(context: Context, id: String): DetailViewModelFactory{ //erstellen factory, die ID braucht
+    fun provideDetailViewModelFactory(context: Context, id: String): DetailViewModelFactory{ //erstellen factory, die ID braucht
         val repository = getMovieRepository(context)
         return DetailViewModelFactory(repository, id)
     }
