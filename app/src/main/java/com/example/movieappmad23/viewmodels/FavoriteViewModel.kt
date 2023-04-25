@@ -10,30 +10,19 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class FavoriteViewModel (private val repository: MovieRepository): ViewModel() {
-    private val _favMovies = MutableStateFlow(listOf<Movie>())
-    val movie: StateFlow<List<Movie>> = _favMovies.asStateFlow() //for updating the flow
-
-
+    private val _favMovies = MutableStateFlow(listOf<Movie>()) //is there to update UI
+    val favMovies: StateFlow<List<Movie>> = _favMovies.asStateFlow() //for updating the flow
     //initialize with list of all favorite movies
     init {
         viewModelScope.launch {
-            repository.getAllFavoriteMovies().collect{movieList ->
-                if (!movieList.isNullOrEmpty()) {
-                    _favMovies.value = movieList
-                }
+            repository.getAllFavoriteMovies()
+                .collect{movieList ->
+                //originally we would check with if(isEmpty) for NullPointerException, but no need anymore, list cant be null
+                _favMovies.value = movieList
+
             }
         }
     }
-
-    /*add new fav movie?? TODO: not sure
-    suspend fun addFavMovie(movie: Movie){
-        repository.add(movie)
-    }
-
-    suspend fun deleteFavMovie(movie: Movie){
-        repository.delete(movie)
-    }*/
-
     suspend fun toggleIsFavorite(movie: Movie){
         movie.isFavorite =  !movie.isFavorite
         repository.update(movie)

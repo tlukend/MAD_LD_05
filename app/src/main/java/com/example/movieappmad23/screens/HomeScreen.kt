@@ -20,31 +20,21 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.movieappmad23.data.MovieDatabase
-import com.example.movieappmad23.models.Movie
-import com.example.movieappmad23.repositories.MovieRepository
 import com.example.movieappmad23.utils.InjectorUtils
-import com.example.movieappmad23.viewmodels.DetailViewModel
 import com.example.movieappmad23.viewmodels.HomeViewModel
-import com.example.movieappmad23.viewmodels.MovieViewModelFactory
-import com.example.movieappmad23.viewmodels.MoviesViewModel
 import com.example.movieappmad23.widgets.HomeTopAppBar
 import com.example.movieappmad23.widgets.MovieRow
+import kotlinx.coroutines.launch
 
 @Composable
-fun HomeScreen(
-    navController: NavController = rememberNavController(),
-    moviesViewModel: MoviesViewModel
-){
-    val db = MovieDatabase.getDatabase(LocalContext.current)
-    val repository = MovieRepository(movieDao = db.movieDao())
-    val factory = MovieViewModelFactory(repository)
-    val viewModel: MoviesViewModel = viewModel(factory = factory)
+fun HomeScreen(navController: NavController = rememberNavController()){
+    //val coroutineScope = rememberCoroutineScope()
+    val viewModel : HomeViewModel = viewModel(factory = InjectorUtils.provideMovieViewModelFactory(
+        LocalContext.current))
+    //val movieListState by viewModel.movies.collectAsState()
 
-   /* val coroutineScope = rememberCoroutineScope()
-    val homeViewModel: HomeViewModel = viewModel(factory = InjectorUtils.provideMovieViewModelFactory(LocalContext.current))
-    val movieList by homeViewModel.movie.collectAsState()
-*/
+    //for more complicated code, read on bottom
+
     Scaffold(topBar = {
         HomeTopAppBar(
             title = "Home",
@@ -71,7 +61,8 @@ fun HomeScreen(
         MainContent(
             modifier = Modifier.padding(padding),
             navController = navController,
-            viewModel = viewModel()
+            viewModel = viewModel
+            //coroutineScope = coroutineScope
         )
     }
 }
@@ -80,12 +71,14 @@ fun HomeScreen(
 fun MainContent(
     modifier: Modifier,
     navController: NavController,
-    viewModel: MoviesViewModel
+    viewModel: HomeViewModel
+    //coroutineScope: CoroutineScope
 ) {
     MovieList(
         modifier = modifier,
         navController = navController,
-        viewModel = viewModel
+        viewModel = viewModel,
+        //coroutineScope = coroutineScope
     )
 }
 
@@ -93,9 +86,11 @@ fun MainContent(
 fun MovieList(
     modifier: Modifier = Modifier,
     navController: NavController,
-    viewModel: MoviesViewModel
+    viewModel: HomeViewModel,
+    //coroutineScope: CoroutineScope
 ) {
-    val movieListState by viewModel.movieListState.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
+    val movieListState by viewModel.movies.collectAsState()
 
     LazyColumn (
         modifier = modifier,
@@ -103,18 +98,34 @@ fun MovieList(
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
 
+
         items(items = movieListState) { movieItem ->
             MovieRow(
                 movie = movieItem,
                 onMovieRowClick = { movieId ->
                     navController.navigate(Screen.DetailScreen.withId(movieId))
                 },
-                onFavClick  = { movie ->
-                    viewModel.updateFavoriteMovies(movie)
+                onFavClick  = {movie ->
+                    coroutineScope.launch {
+                        viewModel.toggleIsFavorite(movieItem)
+                    }
                 }
             )
         }
     }
 }
 
+//thanks to Injectorutils, no need to write all those lines - simplified above
+/*
+val db = MovieDatabase.getDatabase(LocalContext.current) //context in which composable exists right now
+val repository = MovieRepository(movieDao = db.movieDao()) //instance of repo, dao from db, we defined it there
+val factory = MovieViewModelFactory(repository) // as we defined in VMFactory
+val viewModel: MoviesViewModel = viewModel(factory = factory) //viewmodel can use this factory now
 
+val movieListState = viewModel.movieListState.collectAsState()
+val coroutineScope = rememberCoroutineScope()
+*/
+/* val coroutineScope = rememberCoroutineScope()
+ val homeViewModel: HomeViewModel = viewModel(factory = InjectorUtils.provideMovieViewModelFactory(LocalContext.current))
+ val movieList by homeViewModel.movie.collectAsState()
+*/

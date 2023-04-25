@@ -10,24 +10,30 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.movieappmad23.R
-import com.example.movieappmad23.viewmodels.MoviesViewModel
+import com.example.movieappmad23.utils.InjectorUtils
+import com.example.movieappmad23.viewmodels.AddMovieViewModel
 import com.example.movieappmad23.widgets.SimpleTextField
 import com.example.movieappmad23.widgets.SimpleTopAppBar
+import kotlinx.coroutines.launch
 
 @Composable
-fun AddMovieScreen(
-    navController: NavController,
-    moviesViewModel: MoviesViewModel
-){
+fun AddMovieScreen(navController: NavController){
     val scaffoldState = rememberScaffoldState()
+    val viewModel : AddMovieViewModel = viewModel(factory = InjectorUtils.provideMovieViewModelFactory(
+        LocalContext.current))
+    //val viewModel : AddMovieViewModel = viewModel(factory = InjectorUtils.provideMovieViewModelFactory(
+    //    LocalContext.current))
+    //TODO coroutinescope + logic
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -39,7 +45,7 @@ fun AddMovieScreen(
     ) { padding ->
         MainContent(
             Modifier.padding(padding),
-            moviesViewModel = moviesViewModel,
+            viewModel = viewModel,
             navController = navController
         )
     }
@@ -48,7 +54,7 @@ fun AddMovieScreen(
 @Composable
 fun MainContent(
     modifier: Modifier = Modifier,
-    moviesViewModel: MoviesViewModel,
+    viewModel: AddMovieViewModel,
     navController: NavController
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -61,11 +67,14 @@ fun MainContent(
     ) {
 
         MovieBody(
-            movieUiState = moviesViewModel.movieUiState,
-            onMovieValueChange = { newUiState, event -> moviesViewModel.updateUIState(newUiState, event)},
+            movieUiState = viewModel.movieUiState,
+            onMovieValueChange = { newUiState, event -> viewModel.updateUIState(newUiState, event)},
             onSaveClick = {
-                moviesViewModel.saveMovie()
-                navController.navigate(Screen.MainScreen.route)
+                coroutineScope.launch {
+                    viewModel.saveMovie()
+                    navController.navigate(Screen.MainScreen.route)
+                }
+
             }
         )
     }

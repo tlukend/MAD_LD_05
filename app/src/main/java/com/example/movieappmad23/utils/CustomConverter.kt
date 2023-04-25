@@ -31,5 +31,5 @@ class CustomConverter {
 
     //turn string into list from db
     @TypeConverter
-    fun stringToList(value: String) = value.split(",").map {it.trim()}
+    fun stringToList(value: String) = value.split(",").map {it.trim()} //TODO: map it trim find out
 }

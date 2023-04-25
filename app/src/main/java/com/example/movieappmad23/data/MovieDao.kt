@@ -9,21 +9,16 @@ import kotlinx.coroutines.flow.Flow
 interface MovieDao {
     @Insert
     suspend fun add (movie: Movie)
-
     @Update
     suspend fun update (movie: Movie)
-
     @Delete
     suspend fun delete (movie: Movie)
-
-    //gettAllMovies
+    //getAllMovies
     @Query("SELECT * from movie")
     fun getAllMovies(): Flow<List<Movie>>
-
     //getAllFavs
     @Query("SELECT * from movie where isFavorite = true")
     fun getAllFavoriteMovies(): Flow<List<Movie>>
-
     //getMovieByID
     @Query("SELECT * from movie where id =:movieId")
     fun getMovieById(movieId: String): Movie

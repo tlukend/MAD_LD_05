@@ -10,7 +10,17 @@ class MovieRepository (private val movieDao: MovieDao) {
     suspend fun update(movie: Movie) = movieDao.update(movie)
     fun getAllMovies() = movieDao.getAllMovies()
     fun getAllFavoriteMovies() = movieDao.getAllFavoriteMovies()
-    fun getMovieById(movie: Movie) = movieDao.getMovieById(movie.id)
+    fun getMovieById(movieId : String) = movieDao.getMovieById(movieId)
+
+
+    companion object{
+        @Volatile
+        private var instance: MovieRepository? = null
+        fun getInstance(movieDao: MovieDao) =
+            instance ?: synchronized(this){
+                instance ?: MovieRepository(movieDao).also { instance = it }
+            }
+    }
 
 
 
